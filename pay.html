@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Finance Legend • UPI Payment</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f5f7fb;margin:0;padding:24px}
+    .card{max-width:480px;margin:40px auto;background:#fff;border-radius:20px;padding:24px;box-shadow:0 8px 30px #0001}
+    h1{margin-top:0}.row{margin:10px 0}.label{color:#667085;font-size:13px}.value{font-size:18px;font-weight:650}
+    button{width:100%;padding:15px;border:0;border-radius:12px;background:#111827;color:#fff;font-size:17px;font-weight:700;margin-top:18px}
+    .warn{margin-top:16px;color:#7a4b00;background:#fff4d6;padding:12px;border-radius:10px;font-size:14px}
+    .small{color:#667085;font-size:13px;margin-top:14px}
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>💳 Make Payment</h1>
+  <div class="row"><div class="label">Payee</div><div id="pn" class="value">—</div></div>
+  <div class="row"><div class="label">UPI ID</div><div id="pa" class="value">—</div></div>
+  <div class="row"><div class="label">Amount</div><div id="am" class="value">₹—</div></div>
+  <button id="pay">📱 Open UPI App</button>
+  <div class="warn">Never enter your UPI PIN on this webpage. Your PIN belongs only inside your UPI app.</div>
+  <div class="small">If your UPI app does not open automatically, tap the button again or use your UPI app's QR/UPI payment option.</div>
+</div>
+<script>
+(function(){
+  const q = new URLSearchParams(location.search);
+  const pa = q.get("pa") || "";
+  const pn = q.get("pn") || "";
+  const am = q.get("am") || "";
+  const cu = q.get("cu") || "INR";
+
+  document.getElementById("pa").textContent = pa || "Missing";
+  document.getElementById("pn").textContent = pn || "Unknown";
+  document.getElementById("am").textContent = am ? "₹" + Number(am).toFixed(2) : "Missing";
+
+  const upi = "upi://pay?pa=" + encodeURIComponent(pa) +
+              "&pn=" + encodeURIComponent(pn) +
+              "&am=" + encodeURIComponent(am) +
+              "&cu=" + encodeURIComponent(cu);
+
+  function openUPI(){
+    if(!pa || !am){ alert("Invalid payment request."); return; }
+    window.location.href = upi;
+  }
+
+  document.getElementById("pay").addEventListener("click", openUPI);
+
+  // Try once automatically on mobile. If the browser blocks it, the button remains.
+  if (/Android/i.test(navigator.userAgent)) {
+    setTimeout(openUPI, 400);
+  }
+})();
+</script>
+</body>
+</html>
